@@ -6,8 +6,8 @@ Pytorch Implementation of 'Show, Attend and Tell: Neural Image CaptionGeneration
 
 ### Model Architecture
 
-[] VGG-16
-[] Attention Unit
+[x] VGG-16
+[x] Attention Unit
 [] LSTM Unit
 
 ### Inference
