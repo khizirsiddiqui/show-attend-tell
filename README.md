@@ -12,9 +12,10 @@ Pytorch Implementation of 'Show, Attend and Tell: Neural Image CaptionGeneration
 
 ### Dataset
 
-[] Dataset
+[x] Dataset
 
-### Inference
+### Training and Inference
 
+[] Training
 [] Visualize
 
