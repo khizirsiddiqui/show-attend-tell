@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import torchvision
 
@@ -46,7 +47,7 @@ class Decoder(nn.Module):
         else:
             self.device = torch.device(device)
 
-        self.attention = Attention(encoder_dim, decoder_dim, attention_dim)
+        self.attention = AttentionUnit(encoder_dim, decoder_dim, attention_dim)
 
         self.embedding = nn.Embedding(vocab_size, embed_dim)
         if embeddings:
@@ -69,7 +70,7 @@ class Decoder(nn.Module):
         h = self.init_h(mean)
         c = self.init_c(mean)
         return h, c
-    
+
     def forward(self, img_x, cap_x, cap_len):
         bs, ed = img_x.size(0), img_x.size(-1)
         img_x = img_x.view(bs, -1, ed)
@@ -78,7 +79,7 @@ class Decoder(nn.Module):
         cap_len, sort_idx = cap_len.squeeze(1).sort(dim=0, descending=True)
         img_x = img_x[sort_idx]
         cap_x = cap_x[sort_idx]
-        
+
         embeddings = self.embedding(cap_x)
 
         h, c = self.init_lstm_states(img_x)
@@ -88,12 +89,12 @@ class Decoder(nn.Module):
         for t in range(max(l)):
             bs_at_t = sum([lh > t for lh in l])
             at_enc, active = self.attention(img_x[:bs_at_t])
-            
+
             gate = self.f_beta(h[:bs_at_t])
             gate = self.sigmoid(gate)
-            
+
             at_enc = gate * at_enc
-            
+
             dec_inp = toch.cat([embeddings[:bs_at_t, t, :], at_enc], dim=1)
             h, c = self.decode_step(dec_inp, (h[:bs_at_t], c[:bs_at_t]))
             y_hat_t = self.dropout(h)
